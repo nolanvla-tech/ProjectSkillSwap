@@ -1,0 +1,94 @@
+{% extends 'market/base.html' %}
+
+{% block title %}Delete Skill - Campus SkillSwap{% endblock %}
+
+{% block content %}
+<style>
+.delete-card {
+    border-radius: 12px;
+    border: none;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(238, 90, 111, 0.05) 100%);
+}
+
+.delete-icon {
+    font-size: 3.5rem;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+.delete-title {
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.btn-delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+    color: white;
+}
+
+.btn-cancel-delete {
+    background: var(--light-bg);
+    color: var(--text-dark);
+    border: 2px solid var(--border-color);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.btn-cancel-delete:hover {
+    background: var(--border-color);
+    color: var(--text-dark);
+}
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-5">
+            <div class="card delete-card shadow-sm">
+                <div class="card-body text-center" style="padding: 4rem 2.5rem;">
+                    <i class="fas fa-exclamation-triangle delete-icon" style="font-size: 4rem; margin-bottom: 2rem;"></i>
+                    
+                    <h2 class="delete-title mb-4" style="font-size: 1.75rem;">Delete Skill Post?</h2>
+                    <p class="lead text-muted mb-5" style="font-size: 1.1rem; line-height: 1.7;">
+                        Are you sure you want to delete <strong>"{{ skill.title }}"</strong>?
+                    </p>
+                    <p class="text-muted mb-6" style="font-size: 1rem; line-height: 1.6; margin-bottom: 3rem;">This action cannot be undone. The skill will be permanently removed from the marketplace.</p>
+                    
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-delete me-3" style="padding: 0.85rem 2rem; font-size: 1rem;">
+                            <i class="fas fa-trash me-2"></i>Yes, Delete
+                        </button>
+                        <a href="{% url 'market:dashboard' %}" class="btn-cancel-delete" style="padding: 0.85rem 2rem; font-size: 1rem;">
+                            <i class="fas fa-arrow-left me-2"></i>Cancel
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

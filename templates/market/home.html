@@ -1,0 +1,112 @@
+{% extends 'market/base.html' %}
+
+{% block title %}Home - Campus SkillSwap{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div style="background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%); color: white; padding: 8rem 0 6rem; position: relative; overflow: hidden;">
+    <div style="position: absolute; top: -40%; right: -10%; width: 500px; height: 500px; background: rgba(255,255,255,0.05); border-radius: 50%; filter: blur(40px);"></div>
+    <div style="position: absolute; bottom: -20%; left: -5%; width: 400px; height: 400px; background: rgba(255,255,255,0.05); border-radius: 50%; filter: blur(40px);"></div>
+    
+    <div class="container" style="position: relative; z-index: 1;">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h1 class="mb-5" style="color: white; font-size: 3.5rem;">Share Your Skills, Build Your Network</h1>
+                <p class="lead mb-6" style="color: rgba(255,255,255,0.9); font-size: 1.25rem; line-height: 1.8;">Connect with students who want to learn from you. Exchange knowledge, offer services, and grow your professional influence across campus.</p>
+                {% if user.is_authenticated %}
+                <a class="btn btn-light btn-lg" style="padding: 0.85rem 2.5rem; border-radius: 10px; font-weight: 600; font-size: 1rem;" href="{% url 'market:skill_create' %}">
+                    <i class="fas fa-plus-circle me-2"></i>Post a Skill
+                </a>
+                {% else %}
+                <a class="btn btn-light btn-lg me-3" style="padding: 0.85rem 2.5rem; border-radius: 10px; font-weight: 600; font-size: 1rem;" href="{% url 'market:register' %}">
+                    <i class="fas fa-user-plus me-2"></i>Get Started
+                </a>
+                <a class="btn btn-outline-light btn-lg" style="padding: 0.85rem 2.5rem; border-radius: 10px; font-weight: 600; font-size: 1rem;" href="{% url 'login' %}">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </a>
+                {% endif %}
+            </div>
+            <div class="col-lg-5 text-center">
+                <div style="font-size: 6rem; opacity: 0.1;"><i class="fas fa-lightbulb"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Skills Section -->
+<div class="container" style="padding: 7rem 1.5rem;">
+    <div class="row mb-7" style="margin-bottom: 4.5rem;">
+        <div class="col-lg-8">
+            <h2 class="mb-4" style="margin-bottom: 1.25rem; font-size: 2.5rem;"><i class="fas fa-star me-3" style="color: var(--accent);"></i>Discover Skills</h2>
+            <p class="text-muted" style="font-size: 1.1rem; line-height: 1.8;">Explore what your peers are offering</p>
+        </div>
+        {% if user.is_authenticated %}
+        <div class="col-lg-4 text-lg-end">
+            <a class="btn btn-primary" style="padding: 0.85rem 2rem; border-radius: 10px; font-weight: 600; font-size: 1rem;" href="{% url 'market:skill_create' %}">
+                <i class="fas fa-plus-circle me-2"></i>Post a Skill
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if skills %}
+    <div class="row g-5">
+        {% for skill in skills %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 border-0 shadow-sm" style="border-radius: 12px; transition: all 0.3s ease; overflow: hidden;">
+                <div style="position: absolute; top: 20px; right: 20px; z-index: 10;">
+                    <span class="badge" style="background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%); color: white; padding: 0.5rem 1rem; font-weight: 600;">{{ skill.get_category_display }}</span>
+                </div>
+                
+                <div class="card-body" style="padding: 3rem;">
+                    <h5 class="card-title mb-5" style="color: var(--text-dark); font-weight: 700; font-size: 1.3rem;">{{ skill.title }}</h5>
+                    <p class="card-text text-muted mb-5" style="font-size: 1rem; line-height: 1.7;">{{ skill.description|truncatechars:85 }}</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; text-align: center; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 2rem 0; margin: 2rem 0;">
+                        <div>
+                            <div style="font-size: 1.25rem; color: var(--primary); margin-bottom: 0.6rem;"><i class="fas fa-dollar-sign"></i></div>
+                            <div style="font-weight: 700; font-size: 1rem; color: var(--text-dark);">{{ skill.display_price }}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.25rem; color: var(--primary); margin-bottom: 0.6rem;"><i class="fas fa-phone"></i></div>
+                            <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-dark);">{{ skill.get_contact_preference_display }}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; justify-content: center;">
+                            {% if skill.availability_status == 'open' %}
+                                <span class="badge" style="background: linear-gradient(135deg, var(--success) 0%, #059669 100%); color: white; padding: 0.5rem 0.8rem; font-weight: 600; font-size: 0.85rem; display: inline-block;">Open</span>
+                            {% elif skill.availability_status == 'busy' %}
+                                <span class="badge" style="background: linear-gradient(135deg, var(--accent) 0%, #f59e0b 100%); color: white; padding: 0.5rem 0.8rem; font-weight: 600; font-size: 0.85rem; display: inline-block;">Busy</span>
+                            {% else %}
+                                <span class="badge" style="background: linear-gradient(135deg, var(--text-muted) 0%, #6b7280 100%); color: white; padding: 0.5rem 0.8rem; font-weight: 600; font-size: 0.85rem; display: inline-block;">Away</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer" style="border-top: 1px solid var(--border-color); padding: 1.5rem 3rem; background: transparent;">
+                    <small class="text-muted" style="display: block; margin-bottom: 0.75rem; font-size: 0.95rem;">
+                        <i class="fas fa-user-circle me-2"></i><strong>{{ skill.owner.username }}</strong>
+                    </small>
+                    <small class="text-muted" style="font-size: 0.95rem;">
+                        <i class="fas fa-calendar me-2"></i>{{ skill.created_at|date:'M j' }}
+                    </small>
+                </div>
+                
+                <a href="{% url 'market:skill_detail' skill.pk %}" class="stretched-link"></a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>No skills posted yet.</strong>
+        {% if user.is_authenticated %}
+            Be the first to <a href="{% url 'market:skill_create' %}" class="alert-link">create a listing</a>!
+        {% else %}
+            Register to start sharing your skills with the community.
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
