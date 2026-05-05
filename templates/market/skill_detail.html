@@ -1,149 +1,94 @@
 {% extends 'market/base.html' %}
-
-{% block title %}{{ skill.title }} - Campus SkillSwap{% endblock %}
+{% block title %}{{ skill.title }} — SkillSwap{% endblock %}
 
 {% block content %}
-<style>
-.detail-card {
-    border-radius: 12px;
-    border: none;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+<div class="container py-5">
 
-.sidebar-gradient {
-    border-radius: 12px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: white;
-}
-
-.sidebar-gradient:hover {
-    transform: translateY(-4px);
-}
-
-.sidebar-gradient.owner {
-    background: linear-gradient(135deg, var(--primary) 0%, #5558e3 100%);
-}
-
-.sidebar-gradient.contact {
-    background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
-}
-
-.back-link {
-    color: var(--primary);
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    margin-bottom: 1.5rem;
-}
-
-.back-link:hover {
-    transform: translateX(-4px);
-    color: var(--primary-dark);
-}
-
-.detail-section-title {
-    color: var(--text-dark);
-    font-weight: 700;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-}
-
-.detail-box {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(167, 139, 250, 0.08) 100%);
-    padding: 1rem;
-    border-radius: 10px;
-    border-left: 4px solid var(--primary);
-}
-</style>
-
-<div class="container">
-    <a href="{% url 'market:home' %}" class="back-link" style="margin-bottom: 3rem;">
+    <!-- Back link -->
+    <a href="{% url 'market:home' %}" class="d-inline-flex align-items-center text-muted text-decoration-none mb-4"
+       style="font-size: 0.875rem; font-weight: 500; transition: color 0.15s;">
         <i class="fas fa-arrow-left me-2"></i>Back to listings
     </a>
-    
-    
-    <div class="row g-5" style="gap: 2.5rem;">
+
+    <div class="row g-4">
+        <!-- Main content -->
         <div class="col-lg-8">
-            <div class="card detail-card shadow-sm mb-6" style="margin-bottom: 3rem;">
-                <div class="card-body" style="padding: 3rem;">
-                    <!-- Title and Category -->
-                    <div class="d-flex justify-content-between align-items-start mb-5" style="margin-bottom: 2.5rem;">
-                        <div>
-                            <h1 class="display-5 fw-bold mb-3" style="color: var(--text-dark); font-size: 2.25rem;">{{ skill.title }}</h1>
-                            <span class="badge" style="background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%); color: white; padding: 0.6rem 1rem; font-weight: 600; font-size: 0.95rem;">
-                                {{ skill.get_category_display }}
-                            </span>
-                        </div>
-                        <div>
-                            {% if skill.availability_status == 'open' %}
-                                <span class="badge" style="background: linear-gradient(135deg, var(--success) 0%, #059669 100%); color: white; padding: 0.6rem 1rem; font-weight: 600;">Available</span>
-                            {% elif skill.availability_status == 'busy' %}
-                                <span class="badge" style="background: linear-gradient(135deg, var(--accent) 0%, #f59e0b 100%); color: white; padding: 0.6rem 1rem; font-weight: 600;">Currently Busy</span>
-                            {% else %}
-                                <span class="badge" style="background: linear-gradient(135deg, var(--text-muted) 0%, #6b7280 100%); color: white; padding: 0.6rem 1rem; font-weight: 600;">Away</span>
-                            {% endif %}
-                        </div>
+            <div class="card">
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- Tags + status -->
+                    <div class="d-flex flex-wrap gap-2 mb-4">
+                        <span class="tag tag-category">{{ skill.get_category_display }}</span>
+                        {% if skill.availability_status == 'open' %}
+                            <span class="tag tag-open">Available</span>
+                        {% elif skill.availability_status == 'busy' %}
+                            <span class="tag tag-busy">Currently Busy</span>
+                        {% else %}
+                            <span class="tag tag-away">Away</span>
+                        {% endif %}
                     </div>
-                    
-                    <!-- Posted Info -->
-                    <p class="text-muted mb-6" style="font-size: 1rem; margin-bottom: 2.5rem;">
-                        <i class="fas fa-user-circle me-2"></i>Posted by <strong>{{ skill.owner.username }}</strong> on {{ skill.created_at|date:'F j, Y' }}
+
+                    <h1 class="fw-bold mb-2" style="font-size: 1.9rem;">{{ skill.title }}</h1>
+                    <p class="text-muted mb-4" style="font-size: 0.875rem;">
+                        <i class="fas fa-user me-1"></i>
+                        Posted by <strong>{{ skill.owner.username }}</strong> on {{ skill.created_at|date:'F j, Y' }}
                     </p>
-                    
-                    <hr style="border-color: var(--border-color); margin: 2.5rem 0;">
-                    
-                    <!-- Description -->
-                    <h5 class="detail-section-title" style="margin-bottom: 2rem;">Description</h5>
-                    <p class="lead" style="color: var(--text-dark); line-height: 1.8; font-size: 1.1rem; margin-bottom: 2.5rem;">{{ skill.description }}</p>
-                    
-                    <!-- Details Section -->
-                    <hr class="my-6" style="border-color: var(--border-color); margin: 3rem 0;">
-                    <h5 class="detail-section-title" style="margin-bottom: 2rem;">Details</h5>
-                    <div class="row g-4">
-                        <div class="col-md-6 mb-3">
-                            <div class="detail-box" style="padding: 1.5rem;">
-                                <div class="text-muted small mb-2" style="margin-bottom: 0.8rem;"><i class="fas fa-dollar-sign me-2" style="color: var(--primary);"></i>Price</div>
-                                <div class="h4 mb-0 fw-bold" style="color: var(--text-dark); font-size: 1.25rem;">{{ skill.display_price }}</div>
+
+                    <hr style="border-color: var(--border);">
+
+                    <h6 class="fw-semibold mb-3 mt-4" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">Description</h6>
+                    <p style="line-height: 1.8; font-size: 0.975rem;">{{ skill.description }}</p>
+
+                    <hr style="border-color: var(--border);">
+
+                    <h6 class="fw-semibold mb-3 mt-4" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">Details</h6>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="p-3 rounded-3" style="background: #f8fafc; border: 1px solid var(--border);">
+                                <div class="text-muted mb-1" style="font-size: 0.775rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px;">Price</div>
+                                <div class="fw-bold" style="font-size: 1.1rem;">{{ skill.display_price }}</div>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="detail-box" style="padding: 1.5rem;">
-                                <div class="text-muted small mb-2" style="margin-bottom: 0.8rem;"><i class="fas fa-phone me-2" style="color: var(--primary);"></i>Contact Method</div>
-                                <div class="h4 mb-0 fw-bold" style="color: var(--text-dark); font-size: 1.25rem;">{{ skill.get_contact_preference_display }}</div>
+                        <div class="col-sm-6">
+                            <div class="p-3 rounded-3" style="background: #f8fafc; border: 1px solid var(--border);">
+                                <div class="text-muted mb-1" style="font-size: 0.775rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px;">Contact via</div>
+                                <div class="fw-bold" style="font-size: 1.1rem;">{{ skill.get_contact_preference_display }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <!-- Sidebar -->
         <div class="col-lg-4">
             {% if user == skill.owner %}
-            <div class="card sidebar-gradient owner shadow-sm mb-6" style="margin-bottom: 3rem;">
-                <div class="card-body" style="padding: 2rem;">
-                    <h5 class="card-title mb-4" style="font-weight: 700; font-size: 1.2rem;"><i class="fas fa-shield-alt me-2"></i>Your Post</h5>
-                    <p class="mb-4" style="font-size: 1rem; line-height: 1.6;">You own this skill listing. Manage it with the buttons below.</p>
-                    <div class="d-grid gap-3">
-                        <a class="btn btn-light btn-sm" style="font-weight: 500; padding: 0.75rem 1.5rem;" href="{% url 'market:skill_update' skill.pk %}">
-                            <i class="fas fa-edit me-2"></i>Edit
+            <div class="card">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-1">Your Listing</h6>
+                    <p class="text-muted mb-4" style="font-size: 0.875rem;">You own this skill post. Make changes below.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'market:skill_update' skill.pk %}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>Edit Post
                         </a>
-                        <a class="btn btn-outline-light btn-sm" style="font-weight: 500; padding: 0.75rem 1.5rem;" href="{% url 'market:skill_delete' skill.pk %}">
-                            <i class="fas fa-trash me-2"></i>Delete
+                        <a href="{% url 'market:skill_delete' skill.pk %}" class="btn btn-outline-danger">
+                            <i class="fas fa-trash me-2"></i>Delete Post
                         </a>
                     </div>
                 </div>
             </div>
             {% else %}
-            <!-- Contact Card for Other Users -->
-            <div class="card sidebar-gradient contact shadow-sm mb-6" style="margin-bottom: 3rem;">
-                <div class="card-body" style="padding: 2rem;">
-                    <h5 class="card-title mb-4" style="font-weight: 700; font-size: 1.2rem;"><i class="fas fa-envelope me-2"></i>Get in Touch</h5>
-                    <p class="mb-4" style="font-size: 1rem; line-height: 1.6;">Interested in this skill? Contact {{ skill.owner.username }} via {{ skill.get_contact_preference_display|lower }}.</p>
-                    <p class="mb-0 small" style="font-size: 0.95rem;"><em>Note: This is a student marketplace. Be respectful and professional.</em></p>
+            <div class="card" style="border-color: #a5f3fc; background: #f0fdff;">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-1" style="color: #0e7490;">
+                        <i class="fas fa-envelope me-2"></i>Get in Touch
+                    </h6>
+                    <p class="mb-3" style="font-size: 0.875rem; color: #164e63;">
+                        Interested? Contact <strong>{{ skill.owner.username }}</strong> via {{ skill.get_contact_preference_display|lower }}.
+                    </p>
+                    <p class="mb-0" style="font-size: 0.8rem; color: #0e7490;">
+                        <i class="fas fa-info-circle me-1"></i>Be respectful and professional.
+                    </p>
                 </div>
             </div>
             {% endif %}

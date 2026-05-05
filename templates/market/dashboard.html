@@ -1,158 +1,59 @@
 {% extends 'market/base.html' %}
-
-{% block title %}Dashboard - Campus SkillSwap{% endblock %}
+{% block title %}Dashboard — SkillSwap{% endblock %}
 
 {% block content %}
-<style>
-.skill-card {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 12px;
-}
+<div class="container py-5">
 
-.skill-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 28px rgba(99, 102, 241, 0.12);
-}
-
-.badge-category {
-    background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%);
-    color: white;
-    padding: 0.5rem 0.75rem;
-    border-radius: 8px;
-    display: inline-block;
-    font-weight: 600;
-}
-
-.detail-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-}
-
-.detail-item {
-    text-align: center;
-    padding: 0.75rem;
-    background: var(--light-bg);
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.detail-item:hover {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(167, 139, 250, 0.08) 100%);
-}
-
-.detail-item i {
-    color: var(--primary);
-    font-size: 1.2rem;
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.btn-action {
-    flex: 1;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    border: none;
-    text-decoration: none;
-    display: inline-block;
-}
-
-.btn-action.edit {
-    background: linear-gradient(135deg, var(--primary) 0%, #5558e3 100%);
-    color: white;
-}
-
-.btn-action.edit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-    color: white;
-}
-
-.btn-action.delete {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-    color: white;
-}
-
-.btn-action.delete:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
-    color: white;
-}
-</style>
-
-<div class="container">
-    <!-- Dashboard Header -->
-    <div class="row mb-8" style="margin-bottom: 5.5rem;">
-        <div class="col-md-8">
-            <h1 class="display-4 fw-bold mb-3" style="color: var(--text-dark); font-size: 2.75rem;">Your Dashboard</h1>
-            <p class="text-muted lead" style="font-size: 1.2rem; line-height: 1.8;">Manage your skill posts and grow your network.</p>
+    <!-- Header -->
+    <div class="d-flex align-items-start justify-content-between mb-5 flex-wrap gap-3">
+        <div>
+            <h1 class="fw-bold mb-1" style="font-size: 2rem;">Your Dashboard</h1>
+            <p class="text-muted mb-0">Manage your skill listings.</p>
         </div>
-        <div class="col-md-4 text-md-end">
-            <a class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%); color: white; padding: 1rem 2rem; border-radius: 10px; font-weight: 600; border: none; font-size: 1rem;" href="{% url 'market:skill_create' %}">
-                <i class="fas fa-plus-circle me-2"></i>New Skill Post
-            </a>
-        </div>
+        <a href="{% url 'market:skill_create' %}" class="btn btn-primary px-4">
+            <i class="fas fa-plus me-2"></i>New Skill Post
+        </a>
     </div>
-    
+
     {% if skills %}
-    <!-- Skills Cards -->
-    <div class="row g-5" style="gap: 2rem;">
+    <div class="row g-4">
         {% for skill in skills %}
         <div class="col-lg-6">
-            <div class="card h-100 skill-card border-0 shadow-sm">
-                <div class="card-body" style="padding: 2.5rem;">
-                    <!-- Header -->
-                    <div class="d-flex justify-content-between align-items-start mb-4" style="margin-bottom: 2rem;">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <!-- Title row -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
-                            <h5 class="card-title fw-bold mb-3" style="color: var(--text-dark); font-size: 1.3rem;">{{ skill.title }}</h5>
-                            <span class="badge-category">
-                                {{ skill.get_category_display }}
-                            </span>
+                            <h5 class="fw-bold mb-2" style="font-size: 1.05rem;">{{ skill.title }}</h5>
+                            <span class="tag tag-category">{{ skill.get_category_display }}</span>
                         </div>
-                        <div>
-                            {% if skill.availability_status == 'open' %}
-                                <span class="badge" style="background: linear-gradient(135deg, var(--success) 0%, #059669 100%); color: white; font-weight: 600;padding: 0.5rem 0.8rem;">Open</span>
-                            {% elif skill.availability_status == 'busy' %}
-                                <span class="badge" style="background: linear-gradient(135deg, var(--accent) 0%, #f59e0b 100%); color: white; font-weight: 600;padding: 0.5rem 0.8rem;">Busy</span>
-                            {% else %}
-                                <span class="badge" style="background: linear-gradient(135deg, var(--text-muted) 0%, #6b7280 100%); color: white; font-weight: 600;padding: 0.5rem 0.8rem;">Away</span>
-                            {% endif %}
-                        </div>
+                        {% if skill.availability_status == 'open' %}
+                            <span class="tag tag-open">Open</span>
+                        {% elif skill.availability_status == 'busy' %}
+                            <span class="tag tag-busy">Busy</span>
+                        {% else %}
+                            <span class="tag tag-away">Away</span>
+                        {% endif %}
                     </div>
-                    
-                    <!-- Description -->
-                    <p class="card-text text-muted mb-5" style="font-size: 1rem; line-height: 1.7;">{{ skill.description|truncatechars:120 }}</p>
-                    
-                    <!-- Details Grid -->
-                    <div class="detail-grid mb-5" style="margin-bottom: 2.5rem;">
-                        <div class="detail-item" style="padding: 1.2rem;">
-                            <i class="fas fa-dollar-sign"></i>
-                            <div class="fw-bold" style="color: var(--text-dark); font-size: 1rem; margin-top: 0.5rem;">{{ skill.display_price }}</div>
-                        </div>
-                        <div class="detail-item" style="padding: 1.2rem;">
-                            <i class="fas fa-phone"></i>
-                            <div class="fw-bold" style="color: var(--text-dark); font-size: 1rem; margin-top: 0.5rem;">{{ skill.get_contact_preference_display }}</div>
-                        </div>
-                        <div class="detail-item" style="padding: 1.2rem;">
-                            <i class="fas fa-calendar-alt"></i>
-                            <div class="fw-bold" style="color: var(--text-dark); font-size: 1rem; margin-top: 0.5rem;">{{ skill.created_at|date:'M j' }}</div>
-                        </div>
+
+                    <p class="text-muted mb-4" style="font-size: 0.875rem; line-height: 1.6;">{{ skill.description|truncatechars:120 }}</p>
+
+                    <div class="d-flex gap-3 text-muted mb-4" style="font-size: 0.8rem;">
+                        <span><i class="fas fa-tag me-1"></i>{{ skill.display_price }}</span>
+                        <span><i class="fas fa-comment me-1"></i>{{ skill.get_contact_preference_display }}</span>
+                        <span><i class="fas fa-calendar me-1"></i>{{ skill.created_at|date:'M j, Y' }}</span>
                     </div>
-                    
+
                     <!-- Actions -->
-                    <div class="action-buttons" style="gap: 1rem;">
-                        <a class="btn-action edit" href="{% url 'market:skill_update' skill.pk %}">
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'market:skill_update' skill.pk %}" class="btn btn-primary btn-sm px-3">
                             <i class="fas fa-edit me-1"></i>Edit
                         </a>
-                        <a class="btn-action delete" href="{% url 'market:skill_delete' skill.pk %}">
+                        <a href="{% url 'market:skill_delete' skill.pk %}" class="btn btn-outline-danger btn-sm px-3">
                             <i class="fas fa-trash me-1"></i>Delete
+                        </a>
+                        <a href="{% url 'market:skill_detail' skill.pk %}" class="btn btn-outline-secondary btn-sm px-3 ms-auto">
+                            View
                         </a>
                     </div>
                 </div>
@@ -160,18 +61,15 @@
         </div>
         {% endfor %}
     </div>
+
     {% else %}
-    <!-- Empty State -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-body text-center" style="padding: 5rem 2rem;">
-            <i class="fas fa-inbox" style="font-size: 4rem; color: #cbd5e1; margin-bottom: 2rem; display: block;"></i>
-            <h5 class="card-title fw-bold mb-4" style="font-size: 1.5rem;">No Skills Posted Yet</h5>
-            <p class="text-muted mb-5" style="font-size: 1.1rem; line-height: 1.8;">Start sharing your skills with the campus community!</p>
-            <a class="btn btn-primary" style="padding: 0.85rem 2rem; font-size: 1rem; background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%); border: none;" href="{% url 'market:skill_create' %}">
-                <i class="fas fa-plus-circle me-2"></i>Create Your First Skill Post
-            </a>
-        </div>
+    <div class="text-center py-5">
+        <i class="fas fa-inbox fa-3x mb-3" style="color: #cbd5e1;"></i>
+        <h5 class="fw-semibold mb-2">No skills posted yet</h5>
+        <p class="text-muted mb-4" style="font-size: 0.9rem;">Start sharing your skills with the campus community.</p>
+        <a href="{% url 'market:skill_create' %}" class="btn btn-primary px-4">Post Your First Skill</a>
     </div>
     {% endif %}
+
 </div>
 {% endblock %}
