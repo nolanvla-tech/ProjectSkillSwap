@@ -21,8 +21,11 @@ def skill_detail(request, pk):
 
 @login_required
 def dashboard(request):
-    """Show the signed-in user's own skill posts."""
-    skills = request.user.skills.order_by('-created_at')
+    """Show skill posts. Superusers see all skills, others see only their own."""
+    if request.user.is_superuser:
+        skills = Skill.objects.order_by('-created_at')
+    else:
+        skills = request.user.skills.order_by('-created_at')
     return render(request, 'market/dashboard.html', {'skills': skills})
 
 
@@ -59,11 +62,14 @@ def skill_update(request, pk):
 
 @login_required
 def skill_delete(request, pk):
-    """Delete a skill post owned by the signed-in user."""
-    skill = get_object_or_404(Skill, pk=pk, owner=request.user)
+    """Delete a skill post. Superusers can delete any skill."""
+    if request.user.is_superuser:
+        skill = get_object_or_404(Skill, pk=pk)
+    else:
+        skill = get_object_or_404(Skill, pk=pk, owner=request.user)
     if request.method == 'POST':
         skill.delete()
-        messages.success(request, 'Your skill post was deleted.')
+        messages.success(request, 'Skill post deleted.')
         return redirect('market:dashboard')
     return render(request, 'market/skill_confirm_delete.html', {'skill': skill})
 
